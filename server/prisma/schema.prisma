@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  eventid     String   @id @default(uuid())
+  imageLoc    String
+  title       String
+  category    String
+  tags        String
+  description String?
+  date        String
+  time        String
+  venue       String
+  artist      String
+  terms       String?
+  Ticket      Ticket[]
+}
+
+model Ticket {
+  ticketid    String  @id @default(uuid())
+  event       Event   @relation(fields: [eventid], references: [eventid])
+  eventid     String
+  type        String
+  price       Int
+  qty         Int
+  description String?
+  orders      Order[]
+}
+
+model Order {
+  orderid   String @id @default(uuid())
+  ticket    Ticket @relation(fields: [ticketid], references: [ticketid])
+  ticketid  String
+  name      String
+  mail      String @unique
+  phoneno   String
+  amt       Int
+  organizer String
+}
+
+// model Post {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   title     String   @db.VarChar(255)
+//   content   String?
+//   published Boolean  @default(false)
+//   author    User     @relation(fields: [authorId], references: [id])
+//   authorId  Int
+// }
+
+// model Profile {
+//   id     Int     @id @default(autoincrement())
+//   bio    String?
+//   user   User    @relation(fields: [userId], references: [id])
+//   userId Int     @unique
+// }
+
+// model User {
+//   id      Int      @id @default(autoincrement())
+//   email   String   @unique
+//   name    String?
+//   posts   Post[]
+//   profile Profile?
+// }

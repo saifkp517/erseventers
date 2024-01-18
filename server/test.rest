@@ -1,0 +1,49 @@
+
+
+
+POST http://localhost:8080/event/create HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "ERS",
+  "category": "Club-Show",
+  "tags": "car, car",
+  "description": "asdasdasd",
+  "date": "\"2024-01-17T13:54:37.024Z\"",
+  "time": "12:00 AM",
+  "venue": "Blore",
+  "artist": "Saif",
+  "terms": "asdasdas"
+}
+
+
+###
+
+GET http://localhost:8080/event HTTP/1.1
+
+###
+
+POST http://localhost:8080/event/ticket/create HTTP/1.1
+Content-Type: application/json
+
+{
+    "eventid": "09de69b1-69e3-46ea-b655-fb3c23604035",
+    "type": "Club-Show",
+    "price": 320,
+    "qty": 200,
+    "description": "asdasd"
+}
+
+###
+POST http://localhost:8080/event/order/post HTTP/1.1
+Content-Type: application/json
+
+{
+    "ticketid": "c75b8-ba48-4364-90d5-4634127aacb9",
+    "name": "Saif",
+    "mail": "saif@gmail.com",
+    "phoneno": "290381928312",
+    "amt": 640,
+    "organizer": "ERS",
+    "details": "asda"
+}
