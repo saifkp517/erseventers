@@ -126,6 +126,7 @@ const Event = () => {
                 return <
                     EventForm
                     state={state}
+                    image={image}
                     handleInputChange={handleInputChange}
                     handleFileChange={handleFileChange}
                 />;
