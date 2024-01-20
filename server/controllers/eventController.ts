@@ -43,6 +43,8 @@ export const getEventTickets = async (req: Request, res: Response) => {
 export const createEvent = async (req: Request, res: Response) => {
     try {
         const { title, category, tags, description, date, time, venue, artist, terms } = req.body;
+        
+        console.log(req.body);
 
         const event = await prisma.event.create({
             data: {
@@ -75,14 +77,10 @@ export const createTicket = async (req: Request, res: Response) => {
     try {
         const { eventid, type, price, qty, description, orders } = req.body;
 
-        const ticket = await prisma.ticket.create({
-            data: {
-                eventid: eventid,
-                type: type,
-                price: price,
-                qty: qty,
-                description: description,
-            }
+        console.log(req.body)
+
+        const ticket = await prisma.ticket.createMany({
+            data: req.body
         })
 
         res.status(201).send(ticket)
