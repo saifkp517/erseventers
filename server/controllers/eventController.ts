@@ -3,11 +3,6 @@ import { PrismaClient } from "@prisma/client";
 import Twilio from "twilio/lib/rest/Twilio";
 import https from "https"
 
-
-const PAYTM_MERCHANT_KEY = 'aiEcLOKaZufi@rqU';
-const PAYTM_MID = 'zmlHQa48080046451200';
-const PAYTM_WEBSITE = 'WEBSTAGING';
-
 const prisma = new PrismaClient();
 
 ///////////////////////get requests////////////////////////////////
@@ -180,8 +175,8 @@ export const sendWhatsappMsg = async (req: Request, res: Response) => {
     // Download the helper library from https://www.twilio.com/docs/node/install
     // Find your Account SID and Auth Token at twilio.com/console
     // and set the environment variables. See http://twil.io/secure
-    const accountSid = 'AC538a43d3109a03d219b8bb1fee778af4';
-    const authToken = '582b490fbf134b97e3ba82c044b9c0d7';
+    const accountSid;
+    const authToken;
 
 
 
