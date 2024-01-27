@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import PaytmChecksum from "./PaytmChecksum";
+import Twilio from "twilio/lib/rest/Twilio";
 import https from "https"
 
 
@@ -22,13 +22,32 @@ export const getEvents = async (req: Request, res: Response) => {
     }
 }
 
-export const getEventTickets = async (req: Request, res: Response) => {
+export const getEventById = async (req: Request, res: Response) => {
     try {
-        const events = await prisma.ticket.findMany({
+
+        const eventid = req.params.eventid;
+
+        const event = await prisma.event.findUnique({
+            where: {
+                eventid: eventid
+            }
+        })
+
+        res.status(200).send(event)
+
+    } catch (err) {
+        res.status(400).send(err)
+    }
+}
+
+export const getEventTickets = async (req: Request, res: Response) => {
+
+    try {
+        const tickets = await prisma.ticket.findMany({
             where: { eventid: req.params.eventid },
         })
 
-        res.status(200).send(events)
+        res.status(200).send(tickets)
     }
     catch (err) {
         res.status(400).send(err)
@@ -43,7 +62,7 @@ export const getEventTickets = async (req: Request, res: Response) => {
 export const createEvent = async (req: Request, res: Response) => {
     try {
         const { title, category, tags, description, date, time, venue, artist, terms } = req.body;
-        
+
         console.log(req.body);
 
         const event = await prisma.event.create({
@@ -93,13 +112,14 @@ export const createTicket = async (req: Request, res: Response) => {
 
 export const createOrder = async (req: Request, res: Response) => {
     try {
-        const { ticketid, amt, organizer, name, mail, phoneno } = req.body;
+        const { ticketid, amt, organizer, name, email, phoneno, tickets } = req.body;
 
         const order = await prisma.order.create({
             data: {
                 ticketid: ticketid,
                 name: name,
-                mail: mail,
+                email: email,
+                tickets: tickets,
                 phoneno: phoneno,
                 amt: amt,
                 organizer: organizer,
@@ -113,75 +133,70 @@ export const createOrder = async (req: Request, res: Response) => {
     }
 }
 
+export const createOtp = async (req: Request, res: Response) => {
 
-export const PaytmPayment = async (req: Request, res: Response) => {
+    try {
+        const { otp, pageid } = req.body;
 
-    type PaytmParams = {
-        body?: Object;
-        head?: Object;
-    }
-
-    var paytmParams: PaytmParams = {};
-
-    paytmParams.body = {
-        "requestType": "Payment",
-        "mid": "zmlHQa48080046451200",
-        "websiteName": "WEBSTAGING",
-        "orderId": "ORDERID_98765",
-        "callbackUrl": "http://localhost:3000/",
-        "txnAmount": {
-            "value": "1.00",
-            "currency": "INR",
-        },
-        "userInfo": {
-            "custId": "CUST_001",
-        },
-    };
-
-    /*
-    * Generate checksum by parameters we have in body
-    * Find your Merchant Key in your Paytm Dashboard at https://dashboard.paytm.com/next/apikeys 
-    */
-    PaytmChecksum.generateSignature(JSON.stringify(paytmParams.body), "aiEcLOKaZufi@rqU").then(function (checksum) {
-
-        paytmParams.head = {
-            "signature": checksum
-        };
-
-        var post_data = JSON.stringify(paytmParams);
-
-        var options = {
-
-            /* for Staging */
-            hostname: 'securegw-stage.paytm.in',
-
-            /* for Production */
-            // hostname: 'securegw.paytm.in',
-
-            port: 443,
-            path: '/theia/api/v1/initiateTransaction?mid=zmlHQa48080046451200&orderId=ORDERID_98765',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': post_data.length
+        const otpid = await prisma.otp.create({
+            data: {
+                otp: otp,
+                pageid: pageid
             }
-        };
+        })
+        console.log(otpid)
+        res.status(201).send(otpid)
+    }
+    catch (err) {
+        res.status(400).send(err)
+    }
+}
 
-        var response = "";
-        var post_req = https.request(options, function (post_res) {
-            post_res.on('data', function (chunk) {
-                response += chunk;
-            });
+export const verifyOtp = async (req: Request, res: Response) => {
+    try {
+        const { otp, pageid } = req.body;
 
-            post_res.on('end', function () {
-                console.log('Response: ', response);
-            });
-        });
+        const otpid = await prisma.otp.findFirst({
+            where: {
+                otp: otp,
+                pageid: pageid
+            }
+        })
 
-        post_req.write(post_data);
-        post_req.end();
-    });
+        if (otpid) {
+            res.status(200).json({ success: true, message: "OTP has been successfully verified" });
+        } else {
+            res.status(400).json({ success: false, message: "OTP could not be verified" });
+        }
+    }
+    catch (err) {
+        res.status(400).send(err)
+    }
+}
 
+
+export const sendWhatsappMsg = async (req: Request, res: Response) => {
+
+    // Download the helper library from https://www.twilio.com/docs/node/install
+    // Find your Account SID and Auth Token at twilio.com/console
+    // and set the environment variables. See http://twil.io/secure
+    const accountSid = 'AC538a43d3109a03d219b8bb1fee778af4';
+    const authToken = '582b490fbf134b97e3ba82c044b9c0d7';
+
+
+
+    const client = new Twilio(accountSid, authToken);
+
+    console.log('yes')
+
+    client.messages
+        .create({
+            from: 'whatsapp:+16413545414',
+            body: 'Your appointment is coming up on July 21 at 3PM',
+            to: 'whatsapp:+919148654500'
+        })
+        .then((message: any) => console.log("sent"))
+        .catch((err: Error) => console.log(err))
 }
 
 ///////////////////////post requests////////////////////////////////

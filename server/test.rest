@@ -23,6 +23,13 @@ GET http://localhost:8080/event HTTP/1.1
 
 ###
 
+GET http://localhost:8080/event/0d224ba7-2bf2-4a37-8502-4a15e447cce1 HTTP/1.1
+
+###
+
+GET http://localhost:8080/event/tickets/9672628d-2b20-451a-aba3-8bfa3442e0c1 HTTP/1.1
+###
+
 POST http://localhost:8080/event/ticket/create HTTP/1.1
 Content-Type: application/json
 
@@ -39,11 +46,21 @@ POST http://localhost:8080/event/order/post HTTP/1.1
 Content-Type: application/json
 
 {
-    "ticketid": "c75b8-ba48-4364-90d5-4634127aacb9",
+    "ticketid": "b77a3017-1a1d-4aef-b88e-8eeceea579ba",
     "name": "Saif",
-    "mail": "saif@gmail.com",
+    "email": "saif@gmail.com",
     "phoneno": "290381928312",
     "amt": 640,
-    "organizer": "ERS",
-    "details": "asda"
+    "tickets": 10,
+    "organizer": "ERS"
+}
+
+###
+
+POST http://localhost:8080/event/verify-otp HTTP/1.1
+Content-Type: application/json
+
+{
+  "otp": "234234",
+  "pageid": "324234234234"
 }

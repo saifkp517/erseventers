@@ -26,6 +26,7 @@
     "multer": "^1.4.5-lts.1",
     "paytm-node-typescript": "^1.0.5",
     "paytmchecksum": "^1.5.1",
-    "prisma": "^5.7.1"
+    "prisma": "^5.7.1",
+    "twilio": "^4.21.0"
   }
 }

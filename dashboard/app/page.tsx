@@ -7,6 +7,7 @@ import '@fontsource/roboto/700.css';
 export default function Home() {
   return (
     <div className='home'>
+      <a href="/api/auth/login">Login</a>
     </div>
   )
 }

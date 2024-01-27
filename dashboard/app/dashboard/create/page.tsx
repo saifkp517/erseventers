@@ -6,13 +6,15 @@ import EventForm from "@/app/ui/dashboard/form/DetailsForm";
 import TicketForm from "@/app/ui/dashboard/form/TicketForm";
 import { Button, Typography } from "@mui/material";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const Event = () => {
 
-
     const [image, setImage] = useState({ preview: '', data: '' })
-    const [status, setStatus] = useState('')
+    const [tickets, setTickets] = useState<any>([])
+    const [checked, setChecked] = useState(false)
 
     const [submitted, setSubmitted] = useState(true)
 
@@ -26,6 +28,14 @@ const Event = () => {
         venue: "",
         artist: "",
         terms: ""
+    });
+
+    const [ticket, setTicket] = useState({
+        eventid: "",
+        type: "",
+        price: 0,
+        qty: 0,
+        description: ""
     })
 
     const handleFileChange = (e: any) => {
@@ -34,20 +44,12 @@ const Event = () => {
             data: e.target.files[0],
         }
         setImage(img)
-        console.log(img.data);
     }
 
 
-    const [ticketState, setTicketState] = useState({
-        eventid: "",
-        type: "",
-        price: 0,
-        qty: 0,
-        description: ""
-    })
 
-    const handleInputChange = (event: any) => {
-        console.log(state)
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
         const { name, value } = event.target;
 
         setState((prevProps) => ({
@@ -56,28 +58,12 @@ const Event = () => {
         }));
     }
 
-    const handleTicketInputChange = (event: any) => {
-        const { name, value, type } = event.target;
-        setTicketState((prevProps) => ({
-            ...prevProps,
-            [name]: type == "number" ? Number(value) : value
-        }));
-    }
-
-    const saveTicket = () => {
-        console.log(state);
-
-        axios.post('http://localhost:8080/event/ticket/create', ticketState)
-            .then(res => {
-                console.log(res);
-            })
-            .catch(err => console.log(err))
-    }
-
     const createEvent = () => {
 
+        console.log(tickets);
+
         let formData = new FormData()
-        
+
         formData.append('file', image.data)
         formData.append('title', state.title)
         formData.append('category', state.category)
@@ -91,11 +77,17 @@ const Event = () => {
 
         axios.post('http://localhost:8080/event/create', formData)
             .then(res => {
-                ticketState.eventid = res.data.eventid
-                saveTicket();
+                tickets.map((ticket: any) => ticket.eventid = res.data.eventid)
+
+                axios.post('http://localhost:8080/event/ticket/create', tickets)
+                    .then(res => {
+                        console.log(res);
+                    })
+                    .catch(err => console.log(err))
             })
             .catch(err => {
                 setSubmitted(false)
+                console.log(err)
             })
     }
 
@@ -103,10 +95,15 @@ const Event = () => {
 
     const handleNext = () => {
 
+        setChecked(true)
+
         let validated = Object.values(state).every((e: string) => e !== "");
 
         if (!validated) {
-            alert('bruh')
+            toast("Please Enter all the required fields");
+        }
+        else if (tickets.length == 0 && activeStep == 1) {
+            toast('Please save all your ticket details!')
         }
         else {
             if (activeStep == 1) {
@@ -120,6 +117,43 @@ const Event = () => {
         setActiveStep(activeStep - 1);
     };
 
+    const displayTicketForm = () => {
+
+        const handleInputChange = (event: any) => {
+            const { name, value, type } = event.target;
+            setTicket((prevProps) => ({
+                ...prevProps,
+                [name]: type == "number" ? Number(value) : value
+            }));
+        }
+
+        const submitHandler = (event: React.FormEvent) => {
+            event.preventDefault();
+            let filled = Object.values(state).every((e: String | number) => e !== undefined);
+            if (filled) {
+                tickets.push(ticket);
+                setTickets([...tickets])
+                toast(`ticket details saved!`)
+            }
+            else {
+                toast("fill all the details")
+            }
+
+            setTicket({
+                eventid: "",
+                type: "",
+                price: 0,
+                qty: 0,
+                description: ""
+            })
+        }
+
+        return <TicketForm
+            ticket={ticket}
+            handleInputChange={handleInputChange}
+            submitHandler={submitHandler} />
+    }
+
     function getStepContent(step: number) {
         switch (step) {
             case 0:
@@ -129,13 +163,18 @@ const Event = () => {
                     image={image}
                     handleInputChange={handleInputChange}
                     handleFileChange={handleFileChange}
+                    checked={checked}
                 />;
             case 1:
-                return <
-                    TicketForm
-                    state={ticketState}
-                    handleInputChange={handleTicketInputChange}
-                />;
+                return (
+                    <div className="mx-auto max-w-3xl">
+                        <Typography className=" my-10 text-center text-textSoft" variant="h3">Ticket Details</Typography>
+                        {displayTicketForm()}
+                        {
+                            tickets.map((ticket: any) => (<p>{ticket.type}</p>))
+                        }
+                    </div>
+                )
             case 2:
                 return (
                     <div>
@@ -143,7 +182,7 @@ const Event = () => {
                             Unfortunately we were Unable to Proceed
                         </Typography>
                         <Typography variant="subtitle1">
-                            Please try submitting again by filling up all the forms or ensure the ticket details have been filled correctly
+                            Our servers are down currently!, please try again after a while
                         </Typography>
                     </div>
                 )
@@ -171,10 +210,13 @@ const Event = () => {
                 :
                 submitted == false ? (
                     <div className=" mt-28 mx-auto max-w-3xl">
-                        {getStepContent(2)}
-                        <Button className="mx-auto" onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                            Back
-                        </Button>
+                        {getStepContent(activeStep)}
+
+                        {activeStep === 2 && (
+                            <Button className="mx-auto" onClick={() => window.location.reload()} sx={{ mt: 3, ml: 1 }}>
+                                Back
+                            </Button>
+                        )}
                     </div>
                 )
                     :
@@ -200,6 +242,10 @@ const Event = () => {
                         </div>
                     )
             }
+            <ToastContainer
+                position="bottom-left"
+                theme="dark"
+            />
         </div >
     );
 }

@@ -7,6 +7,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Users {
+  userid  String  @id @default(uuid())
+  name    String
+  email   String
+  phoneno String
+}
+
+model Otp {
+  oid    String @id @default(uuid())
+  otp    String
+  pageid String
+}
+
 model Event {
   eventid     String   @id @default(uuid())
   imageLoc    String
@@ -38,10 +51,17 @@ model Order {
   ticket    Ticket @relation(fields: [ticketid], references: [ticketid])
   ticketid  String
   name      String
-  mail      String @unique
+  email     String
+  tickets   Int
   phoneno   String
   amt       Int
   organizer String
+}
+
+model Stats {
+  orderid    String @id @default(uuid())
+  type       String
+  ticketsold Int
 }
 
 // model Post {

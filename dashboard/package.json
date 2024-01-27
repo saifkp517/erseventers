@@ -9,22 +9,29 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "^3.5.0",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
     "@mui/material": "^5.15.4",
+    "@types/qrcode": "^1.5.5",
     "axios": "^1.6.5",
     "next": "14.0.4",
+    "nodemailer": "^6.9.8",
+    "qrcode": "^1.5.3",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^4.11.0",
+    "react-toastify": "^10.0.4",
     "recharts": "^2.9.0",
-    "tailwind-datepicker-react": "^1.4.3"
+    "tailwind-datepicker-react": "^1.4.3",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^9.0.8",
     "autoprefixer": "^10.0.1",
     "daisyui": "^4.5.0",
     "postcss": "^8",

@@ -6,8 +6,7 @@ import React, { useState, useEffect, FormEventHandler } from "react";
 import { Typography } from "@mui/material";
 import axios from "axios";
 
-const EventForm = ({ image, state, handleInputChange, handleFileChange }: any) => {
-
+const EventForm = ({ image, state, handleInputChange, handleFileChange, checked }: any) => {
 
     const options = {
         title: "Date Picker",
@@ -45,7 +44,7 @@ const EventForm = ({ image, state, handleInputChange, handleFileChange }: any) =
     const [show, setShow] = useState<boolean>(false);
 
     const handleChange = (selectedDate: Date) => {
-        state.date = new Date(selectedDate).toDateString();
+        state.date = selectedDate;
     }
     const handleClose = (state: boolean) => {
         setShow(state)
@@ -58,6 +57,7 @@ const EventForm = ({ image, state, handleInputChange, handleFileChange }: any) =
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Event Title</label>
                     <input name="title" value={state.title} onChange={handleInputChange} type="text" id="title" className="shadow-sm bg-bgSoft border border-gray-400 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Event Name" required />
+                    {(checked == true && state.title == "") ? <p className="mt-2 text-red-500 text-xs italic">Please fill out this field.</p> : null}
                 </div>
                 <div className="mb-5">
                     {
@@ -95,34 +95,42 @@ const EventForm = ({ image, state, handleInputChange, handleFileChange }: any) =
                         <option value="Pop-ups">Pop-ups</option>
                         <option value="Festival">Festival</option>
                     </select>
+                    {(checked == true && state.category == "") ? <p className="mt-2 text-red-500 text-xs italic">Please fill out this field.</p> : null}
                 </div>
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Tags</label>
                     <input multiple size={1} name="tags" value={state.tags} onChange={handleInputChange} type="tags" id="tags" className="shadow-sm bg-bgSoft border border-gray-400 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Venue" required />
+                    {(checked == true && state.tags == "") ? <p className="mt-2 text-red-500 text-xs italic">Please fill out this field.</p> : null}
                 </div>
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Date</label>
                     <DatePicker options={options} onChange={handleChange} show={show} setShow={handleClose} />
+                    {(checked == true && state.date == "") ? <p className="mt-2 text-red-500 text-xs italic">Please fill out this field.</p> : null}
                 </div>
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Time</label>
                     <input name="time" value={state.time} onChange={handleInputChange} type="venue" id="venue" className="shadow-sm bg-bgSoft border border-gray-400 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Venue" required />
+                    {(checked == true && state.time == "") ? <p className="mt-2 text-red-500 text-xs italic">Please fill out this field.</p> : null}
                 </div>
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Venue</label>
                     <input name="venue" value={state.venue} onChange={handleInputChange} type="venue" id="venue" className="shadow-sm bg-bgSoft border border-gray-400 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Venue" required />
+                    {(checked == true && state.title == "") ? <p className="mt-2 text-red-500 text-xs italic">Please fill out this field.</p> : null}
                 </div>
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Artist</label>
                     <input name="artist" value={state.artist} onChange={handleInputChange} type="artist" id="artist" className="shadow-sm bg-bgSoft border border-gray-400 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter the names of the Artists" required />
+                    {(checked == true && state.artist == "") ? <p className="mt-2 text-red-500 text-xs italic">Please fill out this field.</p> : null}
                 </div>
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Description</label>
                     <textarea name="description" value={state.description} onChange={handleInputChange} id="message" rows={6} className="block p-2.5 w-full text-sm text-textSoft bg-bgSoft rounded-lg border border-gray-400 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Give a brief Event Description..."></textarea>
+                    {(checked == true && state.description == "") ? <p className="mt-2 text-red-500 text-xs italic">Please fill out this field.</p> : null}
                 </div>
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">terms</label>
                     <textarea name="terms" value={state.terms} onChange={handleInputChange} id="message" rows={6} className="block p-2.5 w-full text-sm text-textSoft bg-bgSoft rounded-lg border border-gray-400 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Event terms..."></textarea>
+                    {(checked == true && state.terms == "") ? <p className="mt-2 text-red-500 text-xs italic">Please fill out this field.</p> : null}
                 </div>
             </form>
         </div>

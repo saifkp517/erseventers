@@ -1,12 +1,11 @@
 "use client"
-
 import React, { Component } from 'react'
 
 class Login extends Component {
     state = {  } 
     render() { 
         return (
-            <div>Login</div>
+            <a href="/api/auth/login">Login</a>
         );
     }
 }
