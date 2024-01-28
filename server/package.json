@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "bun --watch run server.ts",
-    "migrate": "npx prisma migrate dev --name init"
+    "migrate": "npx prisma migrate dev name --init",
+    "migrate --create-only": "npx prisma migrate dev --create-only"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -27,6 +28,7 @@
     "paytm-node-typescript": "^1.0.5",
     "paytmchecksum": "^1.5.1",
     "prisma": "^5.7.1",
+    "razorpay": "^2.9.2",
     "twilio": "^4.21.0"
   }
 }

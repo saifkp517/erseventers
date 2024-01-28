@@ -10,8 +10,9 @@ datasource db {
 model Users {
   userid  String  @id @default(uuid())
   name    String
-  email   String
+  email   String  @unique
   phoneno String
+  orders  Order[]
 }
 
 model Otp {
@@ -47,15 +48,16 @@ model Ticket {
 }
 
 model Order {
-  orderid   String @id @default(uuid())
-  ticket    Ticket @relation(fields: [ticketid], references: [ticketid])
-  ticketid  String
-  name      String
-  email     String
-  tickets   Int
-  phoneno   String
-  amt       Int
-  organizer String
+  orderid      String   @id @default(uuid())
+  ticket       Ticket   @relation(fields: [ticketid], references: [ticketid])
+  ticketid     String
+  type         String
+  tickets      Int
+  amt          Int
+  purchasedate DateTime @default(now())
+  organizer    String
+  Users        Users   @relation(fields: [email], references: [email])
+  email        String
 }
 
 model Stats {

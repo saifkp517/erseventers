@@ -16,10 +16,16 @@ Content-Type: application/json
   "terms": "asdasdas"
 }
 
+###
+POST http://localhost:8080/event/razorpay-payment
+
 
 ###
 
 GET http://localhost:8080/event HTTP/1.1
+
+###
+GET http://localhost:8080/event/get-user/saifkhan501721@gmail.com
 
 ###
 

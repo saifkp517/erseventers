@@ -1,13 +1,16 @@
 'use client'
 import axios from "axios";
+import { Redirect } from "next";
 import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from "react-toastify";
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from "next/router";
 import 'react-toastify/dist/ReactToastify.css';
 
 const OTP = () => {
 
     const params = useSearchParams();
+    //const router = useRouter();
     const pageid = params.get('pageid')
 
     interface Details {
@@ -57,9 +60,12 @@ const OTP = () => {
             pageid: pageid
         })
             .then(res => {
-                toast('OTP Successfully Verified!');
+                toast('done!')
+                axios.post('http://localhost:8080/event/create-user', userdetails)
+                .then(res => console.log(res.data))
+                .catch(err => console.log(err))
             })
-            .catch(err => toast.error("OTP could not be Verified :(", {
+            .catch(err => toast.error("Invalid OTP :(", {
                 position: "bottom-left",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -69,11 +75,7 @@ const OTP = () => {
                 progress: undefined,
                 theme: "dark",
             }))
-
-
     }
-
-
 
     return (
         <div>
@@ -101,7 +103,7 @@ const OTP = () => {
 
                                     </div>
                                     <div className="flex justify-center text-center mt-5">
-                                        <button type="submit" className="mt-5 text-gray-900 bg-gray-600 border border-gray-900 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">VERIFY</button>
+                                        <button type="submit" className="mt-5 text-gray-900 bg-gray-400 border border-gray-900 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-bold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">VERIFY</button>
                                     </div>
                                 </form>
 

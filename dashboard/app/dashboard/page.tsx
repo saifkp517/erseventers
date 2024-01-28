@@ -36,7 +36,7 @@ const DashBoard = () => {
                 <Chart />
                 <Transactions />
                 <Typography variant="h4">Booking URL</Typography>
-                <a href={`http://localhost:3000/booking/?eventid=${eventid}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Go to Booking!</a>
+                <a href={`http://localhost:3000/registration/?eventid=${eventid}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Go to Booking!</a>
 
             </div>
             <div className={styles.side}>
