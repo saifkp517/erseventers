@@ -9,10 +9,12 @@ export async function POST(req, res) {
         console.log("Your email is being processed...")
 
         const transporter = nodemailer.createTransport({
-            service: "Gmail",
             host: "smtp.gmail.com",
-            port: 465,
-            secure: true,
+            port: 587,
+            secure: false,
+            requireTLS: true,
+            logger: true,
+            debug: true,
             auth: {
                 user: process.env.SENDER_EMAIL,
                 pass: process.env.SENDER_PASSWORD,

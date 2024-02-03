@@ -34,6 +34,7 @@ model Event {
   artist      String
   terms       String?
   Ticket      Ticket[]
+  orders      Order[]
 }
 
 model Ticket {
@@ -44,20 +45,19 @@ model Ticket {
   price       Int
   qty         Int
   description String?
-  orders      Order[]
 }
 
 model Order {
   orderid      String   @id @default(uuid())
-  ticket       Ticket   @relation(fields: [ticketid], references: [ticketid])
-  ticketid     String
   type         String
   tickets      Int
   amt          Int
   purchasedate DateTime @default(now())
   organizer    String
-  Users        Users   @relation(fields: [email], references: [email])
+  Users        Users    @relation(fields: [email], references: [email])
   email        String
+  Event        Event?   @relation(fields: [eventid], references: [eventid])
+  eventid String?
 }
 
 model Stats {

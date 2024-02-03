@@ -24,6 +24,7 @@
     "react-icons": "^4.11.0",
     "react-toastify": "^10.0.4",
     "recharts": "^2.9.0",
+    "sharp": "^0.33.2",
     "tailwind-datepicker-react": "^1.4.3",
     "uuid": "^9.0.1"
   },

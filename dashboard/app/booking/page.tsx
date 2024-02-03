@@ -1,19 +1,39 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import Image from 'next/image';
 import { Typography } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
-import axios from 'axios';
+import axios, {AxiosResponse, AxiosError} from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+
+
+
+
+
 
 const Booking = () => {
 
     const params = useSearchParams();
     const [tickets, setTickets] = useState<any>([]);
+    const [event, setEvent] = useState<any>();
+    let [orders, setOrders] = useState<any>([])
+    let [total, setTotal] = useState(0)
     const eventid = params.get('eventid')
+    const [userdata, setUserdata] = useState<any>()
+
 
     useEffect(() => {
+
+        setUserdata(JSON.parse(localStorage.getItem('userdetails')!));
+
+        axios.get(`http://localhost:8080/event/${eventid}`)
+        .then((res: AxiosResponse) => {
+            setEvent(res.data)
+            console.log(res.data)
+        })
+        .catch((e: AxiosError) => console.log(e))
 
         axios.get(`http://localhost:8080/event/tickets/${eventid}`)
             .then(res => {
@@ -23,15 +43,62 @@ const Booking = () => {
 
     }, [])
 
-    console.log(tickets)
+    const Ticket = ({ ticket, index, setTotal }: any) => {
 
-    const [orderstate, setOrderstate] = useState({
-        ticketid: "",
-        type: "",
-        tickets: 0,
-        amt: 0,
-        email: ""
-    })
+        const [number, setNumber] = useState(0);
+
+        const handleChange = (e: any) => {
+
+            const order = {
+                eventid: eventid,
+                amt: ticket.price * e.target.value,
+                type: ticket.type,
+                tickets: e.target.value,
+                email: userdata!.email,
+                ticketid: ticket.ticketid,
+            }
+
+            orders[index] = order
+            setNumber(Number(e.target.value))
+
+            let sum = orders.reduce((accumulator: number, object: any) => {
+                return accumulator + object.amt;
+            }, 0)
+            setTotal(sum)
+
+        }
+
+        return (
+            <div className="p-5 space-y-5 grid grid-cols-6">
+                <div className="col-span-5">
+                    <Typography variant='h5' className="mb-2 font-bold tracking-tight text-gray-400"><span className='text-red-400'>Type: </span> {ticket.type}</Typography>
+                    <Typography variant='h6' className="mb-2 font-normal tracking-tight text-gray-100"><span className='text-pink-400'>Pricing: </span>₹{ticket.price}</Typography>
+                    <Typography className="mb-2 font-normal tracking-tight text--300 text-gray-400">{ticket.description}</Typography>
+                </div>
+                <div className="col-span-1">
+                    <label className="block mb-2 text-sm font-medium text-gray-200">Amt</label>
+                    <select name="number" onChange={handleChange} value={number} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option value={0}>0</option>
+                        <option value={1}>1</option>
+                        <option value={2}>2</option>
+                        <option value={3}>3</option>
+                        <option value={4}>4</option>
+                        <option value={5}>5</option>
+                        <option value={6}>6</option>
+                        <option value={7}>7</option>
+                        <option value={8}>8</option>
+                        <option value={9}>9</option>
+                        <option value={10}>10</option>
+
+                    </select>
+                </div>
+                <hr className=' h-px col-span-6 bg-gray-600 border-0' />
+            </div>
+
+        )
+    }
+
+    const [ticketid, setTicketId] = useState("");
 
     function loadScript(src: any) {
         return new Promise((resolve) => {
@@ -47,21 +114,23 @@ const Booking = () => {
         });
     }
 
-    const displayRazorpay = async () => {
+    const displayRazorpay = async (purchaseamount: number) => {
         const res = await loadScript(
             "https://checkout.razorpay.com/v1/checkout.js"
         );
 
         if (!res) {
-            alert("Razorpay SDK failed to load. Are you online?");
+            toast("Razorpay SDK failed to load. Are you online?");
             return;
         }
 
         // creating a new order
-        const result = await axios.post("http://localhost:8080/event/razorpay-payment");
+        const result = await axios.post("http://localhost:8080/event/razorpay-payment", {
+            amt: purchaseamount
+        });
 
         if (!result) {
-            alert("Server error. Are you online?");
+            toast("Server error. Are you online?");
             return;
         }
 
@@ -69,7 +138,7 @@ const Booking = () => {
         const { amount, id: order_id, currency } = result.data;
 
         const options = {
-            key: 'rzp_test_gOJHq6k4ckujwv', // Enter the Key ID generated from the Dashboard
+            key: 'rzp_live_5SHX3vtipC9MJu', // Enter the Key ID generated from the Dashboard
             amount: amount.toString(),
             currency: currency,
             name: "ERS Eventors",
@@ -86,7 +155,7 @@ const Booking = () => {
 
                 const result = await axios.post("http://localhost:8080/event/razorpay-success", data);
 
-                alert(result.data.msg);
+                toast(result.data.msg);
             },
             prefill: {
                 name: "ERS Eventers",
@@ -105,97 +174,37 @@ const Booking = () => {
         paymentObject.open();
     }
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 
-        console.log(orderstate)
-        const { name, value, type } = e.target
-        setOrderstate((prevProps) => ({
-            ...prevProps,
-            [name]: type == "number" ? Number(value) : value
-        }));
-
-        if (tickets.length == 1) {
-            orderstate.ticketid = tickets[0].ticketid
-        }
-
-        const ticket: any = tickets.find((t: any) => t.ticketid === orderstate.ticketid)
-        if (ticket) {
-            orderstate.type = ticket.type
-            orderstate.tickets = Number(e.target.value);
-            orderstate.amt = Number(e.target.value) * ticket.price;
-        }
-
+    const handlePayment = (total: number) => {
+        displayRazorpay(total)
     }
 
-    const submitForm = (e: React.FormEvent) => {
-        e.preventDefault();
 
-        const userdata = JSON.parse(localStorage.getItem('userdetails')!);
-
-        if (userdata) {
-
-            displayRazorpay();
-
-            orderstate.email = userdata.email;
-
-            axios.post('http://localhost:8080/event/order/post', orderstate)
-                .then(res => {
-
-                    axios.post("/api/sendEmail", orderstate)
-                        .then(res => console.log(res))
-                        .catch(err => console.log(err))
-                })
-                .catch(err => console.log(err))
-        }
-        else {
-            toast("Unknown error occurred")
-        }
-
-
-    }
 
     return (
-        <div className='h-screen w-full flex justify-center items-center'>
-            <div className="p-6 mx-4 bg-bgSoft border border-gray-700 rounded-lg">
-                <Typography className='text-center font-bold' variant='h4'>Book a Ticket!</Typography>
-                <form onSubmit={submitForm} className="mt-10 w-full max-w-lg">
+        <div className='h-screen w-full'>
+            <div
+                className="p-6 mx-4 mb-36">
+                <Image alt="Event Image" className='mx-auto my-5 rounded-xl' src={`http://localhost:8080/images/${event?.imageLoc}`} width={120} height={120}  />
+                <Typography className='text-center font-bold mt-18' variant='h4'>{event?.title}</Typography>
+                <Typography className='text-center font-bold mb-6'>{new Date(event?.date).toDateString()}</Typography>
+                
+                <div className='grid grid-cols-1 place-items-center '>
 
-                    <div className="flex flex-wrap -mx-3 mb-2">
-                        <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                            <label className="block uppercase tracking-wide text-gray-400 text-xs font-bold mb-2" >
-                                Type
-                            </label>
-                            <div className="relative">
-                                <select name="ticketid" onChange={handleInputChange} value={orderstate.ticketid} required className="block appearance-none w-full bg-gray-700 border border-gray-500 text-gray-800 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                                    {
-                                        tickets.map((ticket: any) => (
-                                            <option key={ticket.ticketid} value={ticket.ticketid}>{ticket.type}</option>
-                                        ))
-                                    }
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-                                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                            <label className="block uppercase tracking-wide text-gray-400 text-xs font-bold mb-2" >
-                                No.
-                            </label>
-                            <input name="tickets" min={0} required onChange={handleInputChange} value={orderstate.tickets} className="appearance-none block w-full bg-gray-700 text-gray-800 border border-gray-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="number" placeholder="No. of tickets" />
-                        </div>
+                    <div className="w-12/12 bg-bgSoft border border-gray-700 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                        {
+                            tickets.map((ticket: any, index: number) => {
 
-                        <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                            <label className="block uppercase tracking-wide text-gray-400 text-xs font-bold mb-2" >
-                                Total:
-                            </label>
-                            <input readOnly className="appearance-none block w-full bg-gray-700 text-gray-100 border border-gray-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" value={orderstate.amt} />
-                        </div>
+                                return (
+                                    <Ticket key={index} ticket={ticket} index={index} setTotal={setTotal} />
+                                )
+
+                            })
+                        }
                     </div>
 
-                    <button className="mt-5 text-gray-900 bg-blue-500 border border-blue-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">PAY {orderstate.amt}</button>
+                </div>
 
-                </form>
             </div>
             <ToastContainer
                 position="bottom-center"
@@ -209,6 +218,12 @@ const Booking = () => {
                 pauseOnHover
                 theme="dark"
             />
+            <footer className="flex flex-col h-30 p-10 bg-gray-700 sticky bottom-0">
+                <div className=' text-center'>
+                    <button className="bg-bgSoft border rounded border-gray-900 p-3" onClick={() => handlePayment(total)}>PAY ₹{total}</button><br />
+                </div>
+            </footer>
+
         </div>
     );
 }

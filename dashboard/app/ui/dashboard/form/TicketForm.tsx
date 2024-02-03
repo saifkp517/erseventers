@@ -12,22 +12,17 @@ const TicketForm: any = ({ submitHandler, handleInputChange, ticket }: any) => {
             <form onSubmit={submitHandler} className="p-6 max-w-lg shadow-black shadow-2xl  rounded-lg bg-bgSoft border border-gray-600 card mx-auto">
 
                 <div className="mb-5">
-                    <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Ticket Type</label>
-                    <select name="type" value={ticket.type} onChange={handleInputChange} id="countries" className="bg-bgSoft border border-gray-600 text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option defaultValue={"Choose a Category"}>Choose a Category</option>
-                        <option value="General">General</option>
-                        <option value="VIP">VIP</option>
-                        <option value="Early Bird">Early Bird</option>
-                    </select>
+                <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Ticket type</label>
+                    <input name="type" value={ticket.type} onChange={handleInputChange} type="text" className="shadow-sm bg-bgSoft border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Ticket type" required />
                 </div>
 
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Ticket Price</label>
-                    <input name="price" value={ticket.price} onChange={handleInputChange} type="number" id="venue" className="shadow-sm bg-bgSoft border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Ticket Price" required />
+                    <input name="price" value={ticket.price} onChange={handleInputChange} type="number" className="shadow-sm bg-bgSoft border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Ticket Price" required />
                 </div>
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Ticket Quantity</label>
-                    <input name="qty" value={ticket.qty} onChange={handleInputChange} type="number" id="venue" className="shadow-sm bg-bgSoft border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Ticket Quantity" required />
+                    <input name="qty" value={ticket.qty} onChange={handleInputChange} type="number" className="shadow-sm bg-bgSoft border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Ticket Quantity" required />
                 </div>
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Ticket Description</label>

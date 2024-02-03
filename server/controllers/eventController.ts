@@ -3,9 +3,27 @@ import { PrismaClient } from "@prisma/client";
 import Twilio from "twilio/lib/rest/Twilio";
 import Razorpay from "razorpay";
 import https from "https"
+import nodemailer from "nodemailer"
 import * as crypto from "crypto"
 
 const prisma = new PrismaClient();
+
+
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    requireTLS: true,
+    logger: true,
+    debug: true,
+    auth: {
+        user: process.env.SENDER_EMAIL,
+        pass: process.env.SENDER_PASSWORD,
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
+})
 
 ///////////////////////get requests////////////////////////////////
 export const getEvents = async (req: Request, res: Response) => {
@@ -21,7 +39,6 @@ export const getEvents = async (req: Request, res: Response) => {
 
 export const getEventById = async (req: Request, res: Response) => {
     try {
-
         const eventid = req.params.eventid;
 
         const event = await prisma.event.findUnique({
@@ -63,6 +80,19 @@ export const getEventTickets = async (req: Request, res: Response) => {
         })
 
         res.status(200).send(tickets)
+    }
+    catch (err) {
+        res.status(400).send(err)
+    }
+}
+
+export const getEventOrders = async (req: Request, res: Response) => {
+    try {
+        const orders = await prisma.order.findMany({
+            where: { eventid: req.params.eventid },
+        })
+
+        res.status(200).send(orders)
     }
     catch (err) {
         res.status(400).send(err)
@@ -127,20 +157,27 @@ export const createTicket = async (req: Request, res: Response) => {
 
 export const createOrder = async (req: Request, res: Response) => {
     try {
-        const { ticketid, amt, tickets, type, email} = req.body;
+        const { eventid, amt, type, tickets, email, ticketid } = req.body;
 
-        const order = await prisma.order.create({
-            data: {
-                ticketid: ticketid,
-                type: type,
-                tickets: tickets,
-                amt: amt,
-                organizer: "ERS Eventors",
-                email: email
-            }
-        })
+        const [order, totalOrders] = await prisma.$transaction([
+            prisma.order.create({
+                data: {
+                    eventid: eventid,
+                    type: type,
+                    tickets: tickets,
+                    amt: amt,
+                    organizer: "ERS Eventors",
+                    email: email
+                }
+            }),
+            prisma.ticket.update({
+                where: { ticketid: ticketid },
+                data: { qty: { decrement: tickets } }
+            })
+        ])
 
-        res.status(201).send(order)
+        console.log(totalOrders)
+        res.status(201).send(totalOrders)
     }
     catch (err) {
         res.status(400).send(err)
@@ -212,15 +249,18 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const razorpayOrder = async (req: Request, res: Response) => {
     try {
+
+        const { amt } = req.body;
+
         const instance = new Razorpay({
             key_id: process.env.RAZORPAY_KEY_ID!,
             key_secret: process.env.RAZORPAY_SECRET!,
         });
 
         const options = {
-            amount: 50000, // amount in smallest currency unit
+            amount: Number(amt) * 100, // amount in smallest currency unit
             currency: "INR",
-            receipt: "receipt_order_74394",
+            receipt: `receipt_order_3423`,
         };
 
         const order = await instance.orders.create(options);
@@ -266,6 +306,64 @@ export const razorpayConfirmation = async (req: Request, res: Response) => {
         });
     } catch (error) {
         res.status(500).send(error);
+    }
+}
+
+export const sendOTP = async (req: Request, res: Response) => {
+
+    try {
+
+        const { otp, email } = req.body;
+
+        const mailOptions = {
+            from: process.env.SENDER_EMAIL,
+            to: email,
+            subject: "Sending mail through SMTP",
+            html: `
+                <h1>ERS Eventers Verification!</h1><br />
+                <p>Thank you for registering to the ERS Events Dashboad!, please enter the OTP below to get verified</p><br/>
+                <h4><b>OTP:  ${otp}</b></h4>
+            `
+        }
+
+        //send the mail
+        const info = await transporter.sendMail(mailOptions)
+
+        console.log("Email sent: ", info.response)
+
+        return res.json({ success: true, message: "your email has been sent" })
+
+    } catch (err) {
+        console.log(err)
+        return res.json({ success: false, message: "There has been an error encountered" })
+    }
+
+}
+
+export const sendTicketMail = async (req: Request, res: Response) => {
+    try {
+        const { otp, email } = req.body;
+
+        const mailOptions = {
+            from: process.env.SENDER_EMAIL,
+            to: email,
+            subject: "Sending mail through SMTP",
+            html: `
+                <h1>ERS Eventers Verification!</h1><br />
+                <p>Thank you for registering to the ERS Events Dashboad!, please enter the OTP below to get verified</p><br/>
+                <h4><b>OTP:  ${otp}</b></h4>
+            `
+        }
+
+        //send the mail
+        const info = await transporter.sendMail(mailOptions)
+
+        console.log("Email sent: ", info.response)
+
+        return res.json({ success: true, message: "your email has been sent" })
+    } catch (err) {
+        console.log(err)
+        return res.json({ success: false, message: "There has been an error encountered" })
     }
 }
 

@@ -99,7 +99,7 @@ const EventForm = ({ image, state, handleInputChange, handleFileChange, checked 
                 </div>
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Tags</label>
-                    <input multiple size={1} name="tags" value={state.tags} onChange={handleInputChange} type="tags" id="tags" className="shadow-sm bg-bgSoft border border-gray-400 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Venue" required />
+                    <input multiple size={1} name="tags" value={state.tags} onChange={handleInputChange} type="tags" id="tags" className="shadow-sm bg-bgSoft border border-gray-400 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Tags" required />
                     {(checked == true && state.tags == "") ? <p className="mt-2 text-red-500 text-xs italic">Please fill out this field.</p> : null}
                 </div>
                 <div className="mb-5">
@@ -109,7 +109,7 @@ const EventForm = ({ image, state, handleInputChange, handleFileChange, checked 
                 </div>
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Time</label>
-                    <input name="time" value={state.time} onChange={handleInputChange} type="venue" id="venue" className="shadow-sm bg-bgSoft border border-gray-400 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Venue" required />
+                    <input name="time" value={state.time} onChange={handleInputChange} type="venue" id="venue" className="shadow-sm bg-bgSoft border border-gray-400 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Time" required />
                     {(checked == true && state.time == "") ? <p className="mt-2 text-red-500 text-xs italic">Please fill out this field.</p> : null}
                 </div>
                 <div className="mb-5">
