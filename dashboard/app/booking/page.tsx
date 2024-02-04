@@ -5,13 +5,9 @@ import Image from 'next/image';
 import { Typography } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import axios, {AxiosResponse, AxiosError} from 'axios';
+import Ticket from '../ui/dashboard/card/Ticket';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-
-
-
-
-
 
 const Booking = () => {
 
@@ -43,60 +39,7 @@ const Booking = () => {
 
     }, [])
 
-    const Ticket = ({ ticket, index, setTotal }: any) => {
-
-        const [number, setNumber] = useState(0);
-
-        const handleChange = (e: any) => {
-
-            const order = {
-                eventid: eventid,
-                amt: ticket.price * e.target.value,
-                type: ticket.type,
-                tickets: e.target.value,
-                email: userdata!.email,
-                ticketid: ticket.ticketid,
-            }
-
-            orders[index] = order
-            setNumber(Number(e.target.value))
-
-            let sum = orders.reduce((accumulator: number, object: any) => {
-                return accumulator + object.amt;
-            }, 0)
-            setTotal(sum)
-
-        }
-
-        return (
-            <div className="p-5 space-y-5 grid grid-cols-6">
-                <div className="col-span-5">
-                    <Typography variant='h5' className="mb-2 font-bold tracking-tight text-gray-400"><span className='text-red-400'>Type: </span> {ticket.type}</Typography>
-                    <Typography variant='h6' className="mb-2 font-normal tracking-tight text-gray-100"><span className='text-pink-400'>Pricing: </span>₹{ticket.price}</Typography>
-                    <Typography className="mb-2 font-normal tracking-tight text--300 text-gray-400">{ticket.description}</Typography>
-                </div>
-                <div className="col-span-1">
-                    <label className="block mb-2 text-sm font-medium text-gray-200">Amt</label>
-                    <select name="number" onChange={handleChange} value={number} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option value={0}>0</option>
-                        <option value={1}>1</option>
-                        <option value={2}>2</option>
-                        <option value={3}>3</option>
-                        <option value={4}>4</option>
-                        <option value={5}>5</option>
-                        <option value={6}>6</option>
-                        <option value={7}>7</option>
-                        <option value={8}>8</option>
-                        <option value={9}>9</option>
-                        <option value={10}>10</option>
-
-                    </select>
-                </div>
-                <hr className=' h-px col-span-6 bg-gray-600 border-0' />
-            </div>
-
-        )
-    }
+    
 
     const [ticketid, setTicketId] = useState("");
 
@@ -138,7 +81,7 @@ const Booking = () => {
         const { amount, id: order_id, currency } = result.data;
 
         const options = {
-            key: 'rzp_live_5SHX3vtipC9MJu', // Enter the Key ID generated from the Dashboard
+            key: 'rzp_test_O6ZQlnhFYJEhxP', // Enter the Key ID generated from the Dashboard
             amount: amount.toString(),
             currency: currency,
             name: "ERS Eventors",
@@ -154,13 +97,36 @@ const Booking = () => {
                 };
 
                 const result = await axios.post("http://localhost:8080/event/razorpay-success", data);
+                if(result) {
+                    for(let i = 0; i < orders.length; i++)
+                    {
+                        console.log({
+                            eventid: eventid,
+                            ticketid: orders[i].ticketid,
+                            amt: orders[i].amt,
+                            tickets: Number(orders[i].tickets),
+                            email: orders[i].email,
+                            type: orders[i].type
+                        })
+                        axios.post('http://localhost:8080/event/order/post', {
+                            eventid: eventid,
+                            ticketid: orders[i].ticketid,
+                            amt: orders[i].amt,
+                            tickets: Number(orders[i].tickets),
+                            email: orders[i].email,
+                            type: orders[i].type
+                        })
+                        .then(data => console.log(data))
+                        .catch(err => console.log(err))
+                    }
+                }
 
                 toast(result.data.msg);
             },
             prefill: {
-                name: "ERS Eventers",
-                email: "SoumyaDey@example.com",
-                contact: "9999999999",
+                name: userdata.name,
+                email: userdata.email,
+                contact: userdata.phoneno,
             },
             notes: {
                 address: "Soumya Dey Corporate Office",
@@ -191,12 +157,19 @@ const Booking = () => {
                 
                 <div className='grid grid-cols-1 place-items-center '>
 
-                    <div className="w-12/12 bg-bgSoft border border-gray-700 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                    <div className=" w-full lg:w-1/2 bg-bgSoft border border-gray-700 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                         {
                             tickets.map((ticket: any, index: number) => {
 
                                 return (
-                                    <Ticket key={index} ticket={ticket} index={index} setTotal={setTotal} />
+                                    <Ticket 
+                                        key={index}
+                                        ticket={ticket}
+                                        index={index} 
+                                        orders={orders}
+                                        userdata={userdata}
+                                        setTotal={setTotal}
+                                    />
                                 )
 
                             })
