@@ -1,12 +1,10 @@
 FROM node:20.10.0
 
-WORKDIR /usr/app
+COPY . /app
+WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
-RUN npm run build
+RUN npm install --legacy-peer-deps && npm run build
 
 
-COPY . .
-
-CMD ["npm", "run" , "start"] 
+CMD ["npm", "run" ,"start"] 

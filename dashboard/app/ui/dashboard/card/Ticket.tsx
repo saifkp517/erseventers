@@ -5,6 +5,7 @@ import { Typography } from "@mui/material";
 const Ticket = ({eventid, ticket, index, orders, userdata, setTotal}: any) => {
 
     let [no, setNo] = useState(0);
+    let priceAfterTax = ((ticket.price*0.025*0.18)+(ticket.price*0.025)+ticket.price)
 
     useEffect(() => {
 
@@ -18,7 +19,7 @@ const Ticket = ({eventid, ticket, index, orders, userdata, setTotal}: any) => {
 
         const order = {
             eventid: eventid,
-            amt: ticket.price * e.target.value,
+            amt: priceAfterTax * e.target.value,
             type: ticket.type,
             tickets: e.target.value,
             email: userdata!.email,
@@ -35,7 +36,7 @@ const Ticket = ({eventid, ticket, index, orders, userdata, setTotal}: any) => {
         <div className="p-5 space-y-5 grid grid-cols-6">
             <div className="col-span-4 lg:col-span-5">
                 <Typography variant='h5' className="mb-2 font-bold tracking-tight text-gray-400"><span className='text-red-400'>Type: </span> {ticket.type}</Typography>
-                <Typography variant='h6' className="mb-2 font-normal tracking-tight text-gray-100"><span className='text-pink-400'>Pricing: </span>₹{ticket.price}</Typography>
+                <Typography variant='h6' className="mb-2 font-normal tracking-tight text-gray-100"><span className='text-pink-400'>Pricing: </span>₹{priceAfterTax}</Typography>
                 <Typography className="mb-2 font-normal tracking-tight text--300 text-gray-400">{ticket.description}</Typography>
             </div>
             <div className="col-span-2 lg:col-span-1">
@@ -52,7 +53,6 @@ const Ticket = ({eventid, ticket, index, orders, userdata, setTotal}: any) => {
                     <option value={8}>8</option>
                     <option value={9}>9</option>
                     <option value={10}>10</option>
-
                 </select>
             </div>
             <hr className=' h-px col-span-6 bg-gray-600 border-0' />

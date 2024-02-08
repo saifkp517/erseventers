@@ -51,14 +51,36 @@ Content-Type: application/json
 POST http://localhost:8080/event/order/post HTTP/1.1
 Content-Type: application/json
 
+[
 {
-    "eventid": "8e556887-45d1-4f63-824e-4d49aa3cacec",
-    "ticketid": "d5108e4c-a276-4e0b-807d-12cb84fe2541",
-    "amt": 640,
-    "tickets": 20,
-    "email": "saifkhan501721@gmail.com",
-    "type": "VIP"
+  "eventid": "3e41f896-6f62-4787-bda8-51396b05bb77",
+  "amt": 50,
+  "tickets": 1,
+  "ticketid": "9eb7a5d4-a6a3-4594-9689-3b3fa9d23447",
+  "email": "saifkp517@gmail.com",
+  "type": "General - Female",
+  "organizer": "ers"
+},
+{
+  "eventid": "3e41f896-6f62-4787-bda8-51396b05bb77",
+  "amt": 50,
+  "tickets": 1,
+  "ticketid": "9eb7a5d4-a6a3-4594-9689-3b3fa9d23447",
+  "email": "saifkp517@gmail.com",
+  "type": "General - Female",
+  "organizer": "ers"
+},
+{
+  "eventid": "3e41f896-6f62-4787-bda8-51396b05bb77",
+  "amt": 50,
+  "tickets": 1,
+  "ticketid": "9eb7a5d4-a6a3-4594-9689-3b3fa9d23447",
+  "email": "saifkp517@gmail.com",
+  "type": "General - Female",
+  "organizer": "ers"
 }
+]
+
 
 ###
 
@@ -66,8 +88,8 @@ POST http://localhost:8080/event/verify-otp HTTP/1.1
 Content-Type: application/json
 
 {
-  "otp": "234234",
-  "pageid": "324234234234"
+  "otp": "1303",
+  "pageid": "a75e2ed7-e684-4a1a-9b68-f52adddf0352"
 }
 
 ###

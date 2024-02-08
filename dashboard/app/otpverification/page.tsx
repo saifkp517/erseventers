@@ -4,14 +4,15 @@ import { Redirect } from "next";
 import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from "react-toastify";
 import { useSearchParams } from 'next/navigation';
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import 'react-toastify/dist/ReactToastify.css';
 
 const OTP = () => {
 
     const params = useSearchParams();
-    //const router = useRouter();
-    const pageid = params.get('pageid')
+    const router = useRouter();
+    const pageid = params.get('pageid')    
+    const eventid = params.get('eventid')
 
     interface Details {
         name: String,
@@ -62,7 +63,10 @@ const OTP = () => {
             .then(res => {
                 toast('done!')
                 axios.post('http://localhost:8080/event/create-user', userdetails)
-                .then(res => console.log(res.data))
+                .then(res => {
+                    console.log(res.data);
+                    router.push(`/booking/?eventid=${eventid}`)
+                })
                 .catch(err => console.log(err))
             })
             .catch(err => toast.error("Invalid OTP :(", {

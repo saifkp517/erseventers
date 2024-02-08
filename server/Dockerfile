@@ -1,9 +1,11 @@
-FROM oven/bun:1 as base
+FROM oven/bun:latest AS base
 WORKDIR /usr/src/app
 
 COPY package.json ./
+COPY prisma ./prisma/
 
-RUN bun i
+RUN bun i -g prisma
+RUN bun i && bun run prisma generate
 
 COPY . .
 

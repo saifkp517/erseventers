@@ -4,14 +4,18 @@ import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 import { Typography } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
-import axios, {AxiosResponse, AxiosError} from 'axios';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 import Ticket from '../ui/dashboard/card/Ticket';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from 'next/navigation';
+import Navbar from '../ui/booking/navbar';
 
 const Booking = () => {
 
+    const router = useRouter();
     const params = useSearchParams();
+    const [loading, setLoading] = useState(false);
     const [tickets, setTickets] = useState<any>([]);
     const [event, setEvent] = useState<any>();
     let [orders, setOrders] = useState<any>([])
@@ -25,11 +29,11 @@ const Booking = () => {
         setUserdata(JSON.parse(localStorage.getItem('userdetails')!));
 
         axios.get(`http://localhost:8080/event/${eventid}`)
-        .then((res: AxiosResponse) => {
-            setEvent(res.data)
-            console.log(res.data)
-        })
-        .catch((e: AxiosError) => console.log(e))
+            .then((res: AxiosResponse) => {
+                setEvent(res.data)
+                console.log(res.data)
+            })
+            .catch((e: AxiosError) => console.log(e))
 
         axios.get(`http://localhost:8080/event/tickets/${eventid}`)
             .then(res => {
@@ -39,7 +43,7 @@ const Booking = () => {
 
     }, [])
 
-    
+
 
     const [ticketid, setTicketId] = useState("");
 
@@ -97,31 +101,41 @@ const Booking = () => {
                 };
 
                 const result = await axios.post("http://localhost:8080/event/razorpay-success", data);
-                if(result) {
-                    for(let i = 0; i < orders.length; i++)
-                    {
-                        console.log({
+                if (result) {
+
+                    let purchaseOrders = [];
+
+                    for (let i = 0; i < orders.length; i++) {
+                        purchaseOrders.push({
                             eventid: eventid,
                             ticketid: orders[i].ticketid,
                             amt: orders[i].amt,
                             tickets: Number(orders[i].tickets),
                             email: orders[i].email,
-                            type: orders[i].type
+                            type: orders[i].type,
+                            organizer: event?.title
                         })
-                        axios.post('http://localhost:8080/event/order/post', {
-                            eventid: eventid,
-                            ticketid: orders[i].ticketid,
-                            amt: orders[i].amt,
-                            tickets: Number(orders[i].tickets),
-                            email: orders[i].email,
-                            type: orders[i].type
-                        })
-                        .then(data => console.log(data))
-                        .catch(err => console.log(err))
                     }
+                    axios.post('http://localhost:8080/event/order/post', purchaseOrders)
+                        .then(data => {
+                            console.log(data);
+                            router.push('/booking/success')
+                            axios.post('/api/sendTicket', {
+                                orders: orders,
+                                eventname: event?.title,
+                                userdata: userdata
+                            })
+                                .then(data => console.log("Successfully sent order description"))
+                                .catch(err => console.error(err))
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            toast("Unfortunately we have encountered an error!")
+                        })
+
                 }
 
-                toast(result.data.msg);
+                console.log(result.data.msg);
             },
             prefill: {
                 name: userdata.name,
@@ -142,19 +156,23 @@ const Booking = () => {
 
 
     const handlePayment = (total: number) => {
-        displayRazorpay(total)
+        setLoading(true)
+        displayRazorpay(Math.ceil(total)).finally(() => {
+            setLoading(false)
+        })
     }
 
 
 
     return (
         <div className='h-screen w-full'>
+            <Navbar />
             <div
                 className="p-6 mx-4 mb-36">
-                <Image alt="Event Image" className='mx-auto my-5 rounded-xl' src={`http://localhost:8080/images/${event?.imageLoc}`} width={120} height={120}  />
+                <Image alt="Event Image" className='mx-auto my-5 rounded-xl' src={`http://localhost:8080/images/${event?.imageLoc}`} width={120} height={120} />
                 <Typography className='text-center font-bold mt-18' variant='h4'>{event?.title}</Typography>
                 <Typography className='text-center font-bold mb-6'>{new Date(event?.date).toDateString()}</Typography>
-                
+
                 <div className='grid grid-cols-1 place-items-center '>
 
                     <div className=" w-full lg:w-1/2 bg-bgSoft border border-gray-700 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -162,10 +180,10 @@ const Booking = () => {
                             tickets.map((ticket: any, index: number) => {
 
                                 return (
-                                    <Ticket 
+                                    <Ticket
                                         key={index}
                                         ticket={ticket}
-                                        index={index} 
+                                        index={index}
                                         orders={orders}
                                         userdata={userdata}
                                         setTotal={setTotal}
@@ -175,9 +193,7 @@ const Booking = () => {
                             })
                         }
                     </div>
-
                 </div>
-
             </div>
             <ToastContainer
                 position="bottom-center"
@@ -193,7 +209,10 @@ const Booking = () => {
             />
             <footer className="flex flex-col h-30 p-10 bg-gray-700 sticky bottom-0">
                 <div className=' text-center'>
-                    <button className="bg-bgSoft border rounded border-gray-900 p-3" onClick={() => handlePayment(total)}>PAY ₹{total}</button><br />
+                    <button className="bg-bgSoft border rounded border-gray-900 p-3" onClick={() => handlePayment(total)}>
+                        {loading ? <>Loading...</> : <>PAY ₹{total}</>}
+                    </button><br />
+
                 </div>
             </footer>
 

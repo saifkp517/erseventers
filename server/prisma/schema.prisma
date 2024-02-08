@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -42,7 +43,7 @@ model Ticket {
   event       Event   @relation(fields: [eventid], references: [eventid])
   eventid     String
   type        String
-  price       Int
+  amt       Int
   qty         Int
   description String?
 }

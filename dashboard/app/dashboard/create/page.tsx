@@ -197,12 +197,10 @@ const Event = () => {
             {activeStep === 2 && submitted == true ? (
                 <div className=" mt-28 mx-auto max-w-3l">
                     <Typography variant="h5" gutterBottom>
-                        Thank you for your order.
+                        Event Successfully Created!
                     </Typography>
                     <Typography variant="subtitle1">
-                        Your order number is #2001539. We have emailed your order
-                        confirmation, and will send you an update when your order has
-                        shipped.
+                        View Events Page from the Navbar to check out your selected event!
                     </Typography>
 
                 </div>
