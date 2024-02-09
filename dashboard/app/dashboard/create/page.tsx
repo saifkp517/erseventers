@@ -75,11 +75,11 @@ const Event = () => {
         formData.append('artist', state.artist)
         formData.append('terms', state.terms)
 
-        axios.post('http://localhost:8080/event/create', formData)
+        axios.post(`http://${process.env.HOST}:8080/event/create`, formData)
             .then(res => {
                 tickets.map((ticket: any) => ticket.eventid = res.data.eventid)
 
-                axios.post('http://localhost:8080/event/ticket/create', tickets)
+                axios.post(`http://${process.env.HOST}:8080/event/ticket/create`, tickets)
                     .then(res => {
                         console.log(res);
                     })

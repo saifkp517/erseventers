@@ -9,6 +9,9 @@ const nextConfig = {
             'images.unsplash.com',
             'localhost'
         ]
+    },
+    env: {
+        HOST: process.env.HOST
     }
 }
 

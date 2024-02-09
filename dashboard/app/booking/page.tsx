@@ -28,14 +28,14 @@ const Booking = () => {
 
         setUserdata(JSON.parse(localStorage.getItem('userdetails')!));
 
-        axios.get(`http://localhost:8080/event/${eventid}`)
+        axios.get(`http://${process.env.HOST}:8080/event/${eventid}`)
             .then((res: AxiosResponse) => {
                 setEvent(res.data)
                 console.log(res.data)
             })
             .catch((e: AxiosError) => console.log(e))
 
-        axios.get(`http://localhost:8080/event/tickets/${eventid}`)
+        axios.get(`http://${process.env.HOST}:8080/event/tickets/${eventid}`)
             .then(res => {
                 setTickets(res.data)
             })
@@ -72,7 +72,7 @@ const Booking = () => {
         }
 
         // creating a new order
-        const result = await axios.post("http://localhost:8080/event/razorpay-payment", {
+        const result = await axios.post(`http://${process.env.HOST}:8080/event/razorpay-payment`, {
             amt: purchaseamount
         });
 
@@ -100,7 +100,7 @@ const Booking = () => {
                     razorpaySignature: response.razorpay_signature,
                 };
 
-                const result = await axios.post("http://localhost:8080/event/razorpay-success", data);
+                const result = await axios.post(`http://${process.env.HOST}:8080/event/razorpay-success`, data);
                 if (result) {
 
                     let purchaseOrders = [];
@@ -116,7 +116,7 @@ const Booking = () => {
                             organizer: event?.title
                         })
                     }
-                    axios.post('http://localhost:8080/event/order/post', purchaseOrders)
+                    axios.post(`http://${process.env.HOST}:8080/event/order/post`, purchaseOrders)
                         .then(data => {
                             console.log(data);
                             router.push('/booking/success')
@@ -157,9 +157,47 @@ const Booking = () => {
 
     const handlePayment = (total: number) => {
         setLoading(true)
-        displayRazorpay(Math.ceil(total)).finally(() => {
-            setLoading(false)
-        })
+        if (total == 0 && orders.length != 0) {
+
+            let purchaseOrders = [];
+
+            for (let i = 0; i < orders.length; i++) {
+                purchaseOrders.push({
+                    eventid: eventid,
+                    ticketid: orders[i].ticketid,
+                    amt: orders[i].amt,
+                    tickets: Number(orders[i].tickets),
+                    email: orders[i].email,
+                    type: orders[i].type,
+                    organizer: event?.title
+                })
+            }
+
+            axios.post(`http://${process.env.HOST}:8080/event/order/post`, purchaseOrders)
+                .then(data => {
+                    console.log(data);
+                    router.push('/booking/success')
+                    axios.post('/api/sendTicket', {
+                        orders: orders,
+                        eventname: event?.title,
+                        userdata: userdata
+                    })
+                        .then(data => console.log("Successfully sent order description"))
+                        .catch(err => console.error(err))
+                })
+                .catch(err => {
+                    console.log(err)
+                    toast("Unfortunately we have encountered an error!")
+                })
+                .finally(() => setLoading(false))
+        }
+        else
+        {
+            displayRazorpay(Math.ceil(total)).finally(() => {
+                setLoading(false)
+            })
+        }
+        
     }
 
 
@@ -169,7 +207,7 @@ const Booking = () => {
             <Navbar />
             <div
                 className="p-6 mx-4 mb-36">
-                <Image alt="Event Image" className='mx-auto my-5 rounded-xl' src={`http://localhost:8080/images/${event?.imageLoc}`} width={120} height={120} />
+                <Image alt="Event Image" className='mx-auto my-5 rounded-xl' src={`http://${process.env.HOST}:8080/images/${event?.imageLoc}`} width={120} height={120} />
                 <Typography className='text-center font-bold mt-18' variant='h4'>{event?.title}</Typography>
                 <Typography className='text-center font-bold mb-6'>{new Date(event?.date).toDateString()}</Typography>
 

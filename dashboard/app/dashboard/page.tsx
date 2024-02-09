@@ -19,16 +19,15 @@ const DashBoard = () => {
 
     useEffect(() => {
 
-        axios.get(`http://localhost:8080/event/orders/${eventid}`)
+        axios.get(`http://${process.env.HOST}:8080/event/orders/${eventid}`)
         .then((res: AxiosResponse) => {
             console.log(res);
             setOrders(res.data)
 
-            
         })
         .catch((e: AxiosError) => console.log(e))
 
-        axios.get(`http://localhost:8080/event/${eventid}`)
+        axios.get(`http://${process.env.HOST}:8080/event/${eventid}`)
             .then((res: AxiosResponse) => {
                 console.log(res.data)
             })
@@ -112,7 +111,7 @@ const DashBoard = () => {
                 <Chart data={data} />
                 <Transactions orders={orders} />
                 <Typography variant="h4">Booking URL</Typography>
-                <a href={`http://localhost:3000/registration/?eventid=${eventid}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Go to Booking!</a>
+                <a href={`http://${process.env.HOST}:3000/registration/?eventid=${eventid}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Go to Booking!</a>
 
             </div>
             <div className={styles.side}>
