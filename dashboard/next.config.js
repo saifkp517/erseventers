@@ -7,7 +7,8 @@ const nextConfig = {
     images: {
         domains: [
             'images.unsplash.com',
-            'localhost'
+            'localhost',
+            'erseventers.in'
         ]
     },
     env: {

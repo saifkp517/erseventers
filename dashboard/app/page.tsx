@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -13,7 +14,7 @@ declare global {
 export default function Home() {
   return (
     <div className='home'>
-      <a href="/api/auth/login">Login</a>
+      <Link href="/api/auth/login">Login</Link>
     </div>
   )
 }

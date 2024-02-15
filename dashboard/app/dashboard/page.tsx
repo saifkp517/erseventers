@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
+import Link from 'next/link'
 import { Typography } from "@mui/material";
 import Card from "../ui/dashboard/card/card";
 import Chart from "../ui/dashboard/chart/chart";
@@ -111,7 +112,7 @@ const DashBoard = () => {
                 <Chart data={data} />
                 <Transactions orders={orders} />
                 <Typography variant="h4">Booking URL</Typography>
-                <a href={`http://localhost:3000/registration/?eventid=${eventid}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Go to Booking!</a>
+                <Link href={`/registration/?eventid=${eventid}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Go to Booking!</Link>
 
             </div>
             <div className={styles.side}>
