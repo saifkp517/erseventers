@@ -33,7 +33,7 @@ const Event = () => {
     const [ticket, setTicket] = useState({
         eventid: "",
         type: "",
-        price: 0,
+        amt: 0,
         qty: 0,
         description: ""
     })
@@ -75,15 +75,21 @@ const Event = () => {
         formData.append('artist', state.artist)
         formData.append('terms', state.terms)
 
-        axios.post(`http://${process.env.HOST}:8080/event/create`, formData)
+        axios.post(`http://localhost:8080/event/create`, formData)
             .then(res => {
                 tickets.map((ticket: any) => ticket.eventid = res.data.eventid)
 
-                axios.post(`http://${process.env.HOST}:8080/event/ticket/create`, tickets)
+                console.log(tickets)
+
+                axios.post(`http://localhost:8080/event/ticket/create`, tickets)
                     .then(res => {
                         console.log(res);
                     })
-                    .catch(err => console.log(err))
+                    .catch(err => {
+                        alert("There was an error submitting the ticket!")
+                        setSubmitted(false)
+                        console.log(err)
+                    })
             })
             .catch(err => {
                 setSubmitted(false)
@@ -106,7 +112,7 @@ const Event = () => {
             toast('Please save all your ticket details!')
         }
         else {
-            if (activeStep == 1) {
+            if (activeStep == 1 && submitted == true) {
                 createEvent();
             }
             setActiveStep(activeStep + 1);
@@ -132,8 +138,8 @@ const Event = () => {
             let filled = Object.values(state).every((e: String | number) => e !== undefined);
             if (filled) {
                 tickets.push(ticket);
-                setTickets([...tickets])
-                toast(`ticket details saved!`)
+                setTickets([...tickets]);
+                console.log(tickets)
             }
             else {
                 toast("fill all the details")
@@ -142,7 +148,7 @@ const Event = () => {
             setTicket({
                 eventid: "",
                 type: "",
-                price: 0,
+                amt: 0,
                 qty: 0,
                 description: ""
             })
@@ -171,7 +177,7 @@ const Event = () => {
                         <Typography className=" my-10 text-center text-textSoft" variant="h3">Ticket Details</Typography>
                         {displayTicketForm()}
                         {
-                            tickets.map((ticket: any) => (<p>{ticket.type}</p>))
+                            tickets.map((ticket: any) => (<p key={ticket.ticketid}>{ticket.type}</p>))
                         }
                     </div>
                 )
@@ -242,6 +248,14 @@ const Event = () => {
             }
             <ToastContainer
                 position="bottom-left"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
                 theme="dark"
             />
         </div >

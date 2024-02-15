@@ -18,7 +18,7 @@ const TicketForm: any = ({ submitHandler, handleInputChange, ticket }: any) => {
 
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Ticket Price</label>
-                    <input name="price" value={ticket.price} onChange={handleInputChange} type="number" className="shadow-sm bg-bgSoft border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Ticket Price" required />
+                    <input name="amt" value={ticket.amt} onChange={handleInputChange} type="number" className="shadow-sm bg-bgSoft border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Enter Ticket Price" required />
                 </div>
                 <div className="mb-5">
                     <label className="block mb-2 text-sm font-medium text-gray-200 dark:text-white">Ticket Quantity</label>
