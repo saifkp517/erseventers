@@ -28,14 +28,14 @@ const Booking = () => {
 
         setUserdata(JSON.parse(localStorage.getItem('userdetails')!));
 
-        axios.get(`http://${process.env.HOST}/event/${eventid}`)
+        axios.get(`http://localhost:8080/server/event/${eventid}`)
             .then((res: AxiosResponse) => {
                 setEvent(res.data)
                 console.log(res.data)
             })
             .catch((e: AxiosError) => console.log(e))
 
-        axios.get(`http://${process.env.HOST}/event/tickets/${eventid}`)
+        axios.get(`http://localhost:8080/server/event/tickets/${eventid}`)
             .then(res => {
                 setTickets(res.data)
             })
@@ -72,7 +72,7 @@ const Booking = () => {
         }
 
         // creating a new order
-        const result = await axios.post(`http://${process.env.HOST}/event/razorpay-payment`, {
+        const result = await axios.post(`http://localhost:8080/server/event/razorpay-payment`, {
             amt: purchaseamount
         });
 
@@ -100,7 +100,7 @@ const Booking = () => {
                     razorpaySignature: response.razorpay_signature,
                 };
 
-                const result = await axios.post(`http://${process.env.HOST}/event/razorpay-success`, data);
+                const result = await axios.post(`http://localhost:8080/server/event/razorpay-success`, data);
                 if (result) {
 
                     let purchaseOrders = [];
@@ -116,7 +116,7 @@ const Booking = () => {
                             organizer: event?.title
                         })
                     }
-                    axios.post(`http://${process.env.HOST}/event/order/post`, purchaseOrders)
+                    axios.post(`http://localhost:8080/server/event/order/post`, purchaseOrders)
                         .then(data => {
                             console.log(data);
                             router.push('/booking/success')
@@ -173,7 +173,7 @@ const Booking = () => {
                 })
             }
 
-            axios.post(`http://${process.env.HOST}/event/order/post`, purchaseOrders)
+            axios.post(`http://localhost:8080/server/event/order/post`, purchaseOrders)
                 .then(data => {
                     console.log(data);
                     router.push('/booking/success')
@@ -207,7 +207,7 @@ const Booking = () => {
             <Navbar />
             <div
                 className="p-6 mx-4 mb-36">
-                <Image alt="Event Image" className='mx-auto my-5 rounded-xl' src={`http://${process.env.HOST}/images/${event?.imageLoc}`} width={120} height={120} />
+                <Image alt="Event Image" className='mx-auto my-5 rounded-xl' src={`http://localhost:8080/server/images/${event?.imageLoc}`} width={120} height={120} />
                 <Typography className='text-center font-bold mt-18' variant='h4'>{event?.title}</Typography>
                 <Typography className='text-center font-bold mb-6'>{new Date(event?.date).toDateString()}</Typography>
 
