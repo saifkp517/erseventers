@@ -9,7 +9,7 @@ const Users = () => {
 
     useEffect(() => {
 
-        axios.get(`http://localhost:8080/server/event`)
+        axios.get(`${process.env.HOST}/server/event`)
         .then(res => {
             setEvents(res.data)
         })

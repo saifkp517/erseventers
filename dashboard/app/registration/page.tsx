@@ -41,7 +41,7 @@ const Registration = () => {
 
         const pageid = uuidv4();
 
-        axios.get(`http://localhost:8080/server/event/get-user/${userdetails.email}`)
+        axios.get(`${process.env.HOST}/server/event/get-user/${userdetails.email}`)
             .then(res => {
                 if (res.data.length != 0) {
                     localStorage.setItem('userdetails', JSON.stringify(userdetails))
@@ -53,7 +53,7 @@ const Registration = () => {
                     })
                         .then((res: AxiosResponse) => {
                             console.log(res.data)
-                            axios.post(`http://localhost:8080/server/event/create-otp`, {
+                            axios.post(`${process.env.HOST}/server/event/create-otp`, {
                                 otp: JSON.stringify(otp),
                                 pageid: pageid
                             })

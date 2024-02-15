@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
@@ -43,8 +43,8 @@ model Ticket {
   event       Event   @relation(fields: [eventid], references: [eventid])
   eventid     String
   type        String
-  amt       Int
-  qty         Int
+  amt         Int
+  qty         Int 
   description String?
 }
 
@@ -58,7 +58,7 @@ model Order {
   Users        Users    @relation(fields: [email], references: [email])
   email        String
   Event        Event?   @relation(fields: [eventid], references: [eventid])
-  eventid String?
+  eventid      String?
 }
 
 model Stats {

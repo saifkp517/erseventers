@@ -19,7 +19,7 @@ const DashBoard = () => {
 
     useEffect(() => {
 
-        axios.get(`http://localhost:8080/server/event/orders/${eventid}`)
+        axios.get(`${process.env.HOST}/server/event/orders/${eventid}`)
         .then((res: AxiosResponse) => {
             console.log(res);
             setOrders(res.data)
@@ -27,7 +27,7 @@ const DashBoard = () => {
         })
         .catch((e: AxiosError) => console.log(e))
 
-        axios.get(`http://localhost:8080/server/event/${eventid}`)
+        axios.get(`${process.env.HOST}/server/event/${eventid}`)
             .then((res: AxiosResponse) => {
                 console.log(res.data)
             })
