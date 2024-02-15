@@ -56,13 +56,13 @@ const OTP = () => {
 
         const otp = OTP.join('');
 
-        axios.post(`http://localhost:8080/event/verify-otp`, {
+        axios.post(`http://${process.env.HOST}/event/verify-otp`, {
             otp: otp,
             pageid: pageid
         })
             .then(res => {
                 toast('done!')
-                axios.post(`http://localhost:8080/event/create-user`, userdetails)
+                axios.post(`http://${process.env.HOST}/event/create-user`, userdetails)
                 .then(res => {
                     console.log(res.data);
                     router.push(`/booking/?eventid=${eventid}`)
