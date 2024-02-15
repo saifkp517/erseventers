@@ -58,7 +58,7 @@ export const getEventTickets = async (req: Request, res: Response) => {
 
     try {
         const tickets = await prisma.ticket.findMany({
-            where: { eventid: req.params.eventid },
+            where: { eventid: req.params.eventid},
         })
 
         res.status(200).send(tickets)
@@ -121,9 +121,9 @@ export const postImage = async (req: Request, res: Response) => {
 
 export const createTicket = async (req: Request, res: Response) => {
     try {
-        const { eventid, type, price, qty, description, orders } = req.body;
+        const { eventid, type, amt, qty, description, orders } = req.body;
 
-        console.log(req.body)
+        console.log("CreateTicket called!")
 
         const ticket = await prisma.ticket.createMany({
             data: req.body
